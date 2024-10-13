@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start src/server.ts --node-args='-r ts-node/register'",
+    "start": "pm2 start src/server.ts --interpreter=node --node-args='-r ts-node/register'",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
   },
   "keywords": [],
