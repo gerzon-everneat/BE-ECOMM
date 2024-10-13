@@ -1,11 +1,21 @@
 import express, { Request, Response } from "express";
 import axios from "axios";
 import dotenv from "dotenv";
+import logger from "./logger"; // Import the logger
 
 dotenv.config();
 
 const app = express();
 const port = 4000;
+// Middleware to log requests
+app.use((req, res, next) => {
+  logger.info({
+    method: req.method,
+    url: req.url,
+    timestamp: new Date().toISOString(),
+  });
+  next();
+});
 
 // Load environment variables
 const {
