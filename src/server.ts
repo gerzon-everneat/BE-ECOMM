@@ -43,6 +43,11 @@ app.get("/auth", (req: Request, res: Response) => {
   res.redirect(authorizationUrl);
 });
 
+//health check
+app.get("/health", (req: Request, res: Response) => {
+  res.send("Server is running");
+});
+
 // Callback endpoint to handle the authorization response
 app.get("/callback", async (req: Request, res: Response): Promise<void> => {
   const authorizationCode = req.query.code as string;
