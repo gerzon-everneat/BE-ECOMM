@@ -111,14 +111,23 @@ app.get("/callback", async (req, res) => {
   }
 
   try {
+    if (!HEADLESS_CLIENT_ID) throw new Error("Missing client ID");
     // Exchange the authorization code for an access token
-    const tokenResponse = await axios.post(HEADLESS_TOKEN_ENDPOINT, {
-      code: authorizationCode,
-      client_id: HEADLESS_CLIENT_ID,
-      redirect_uri: REDIRECT_URI,
-      grant_type: "authorization_code",
-      code_verifier: codeVerifier,
-    });
+    const tokenResponse = await axios.post(
+      HEADLESS_TOKEN_ENDPOINT,
+      {
+        client_id: HEADLESS_CLIENT_ID as string,
+        grant_type: "authorization_code",
+        code: authorizationCode,
+        redirect_uri: REDIRECT_URI,
+        code_verifier: codeVerifier,
+      },
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
 
     const accessToken = tokenResponse.data.access_token;
 
