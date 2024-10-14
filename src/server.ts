@@ -57,7 +57,7 @@ declare module "express-session" {
 
 // Endpoint to initiate the authorization process
 app.get("/auth", async (req: Request, res: Response) => {
-  const clientId = CLIENT_ID;
+  const clientId = HEADLESS_CLIENT_ID;
   const redirectUri = REDIRECT_URI;
   const state = "some-random-state"; // You should generate a random state for security
   const nonce = "some-random-nonce"; // You should generate a random nonce for security
