@@ -101,12 +101,9 @@ app.get("/auth", async (req: Request, res: Response) => {
 app.get("/health", (req: Request, res: Response) => {
   res.send("Server is running");
 });
-
-// Callback endpoint to handle the authorization response
-app.get("/callback", async (req: Request, res: Response): Promise<void> => {
-  console.log("Callback query:", req.query);
-  const authorizationCode = req.query.code as string;
-  console.log("Authorization code:", authorizationCode, req.query);
+app.get("/callback", async (req, res) => {
+  const authorizationCode = req.query.code;
+  const codeVerifier = req.session.codeVerifier;
 
   if (!authorizationCode) {
     res.status(400).send("Authorization code is missing");
@@ -118,21 +115,27 @@ app.get("/callback", async (req: Request, res: Response): Promise<void> => {
     const tokenResponse = await axios.post(HEADLESS_TOKEN_ENDPOINT, {
       code: authorizationCode,
       client_id: HEADLESS_CLIENT_ID,
-      // client_secret: CLIENT_SECRET,
       redirect_uri: REDIRECT_URI,
       grant_type: "authorization_code",
-      code_verifier: req.session.codeVerifier,
+      code_verifier: codeVerifier,
     });
 
     const accessToken = tokenResponse.data.access_token;
+
+    // Log the access token for debugging
+    console.log("Access Token:", accessToken);
 
     // Redirect to the client with the access token
     const localhostRedirectUri = `http://localhost:5173?token=${accessToken}`;
     res.redirect(localhostRedirectUri);
   } catch (error) {
-    console.error("Error exchanging authorization code:", error);
+    console.log(
+      "Failed to exchange authorization code for access token",
+      error
+    );
+
     res
-      .status(500)
+      .status(400)
       .send("Failed to exchange authorization code for access token");
   }
 });
