@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import session from "express-session";
 import dotenv from "dotenv";
 import crypto from "crypto";
+import axios from "axios";
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ const port = 4000;
 // Load environment variables
 const {
   HEADLESS_CLIENT_ID,
+  // CLIENT_SECRET,
   HEADLESS_AUTHORIZATION_ENDPOINT,
   HEADLESS_TOKEN_ENDPOINT,
   HEADLESS_LOGOUT_ENDPOINT,
@@ -19,6 +21,7 @@ const {
 
 if (
   !HEADLESS_CLIENT_ID ||
+  // !CLIENT_SECRET ||
   !HEADLESS_AUTHORIZATION_ENDPOINT ||
   !HEADLESS_TOKEN_ENDPOINT ||
   !HEADLESS_LOGOUT_ENDPOINT ||
@@ -31,7 +34,7 @@ if (
 // Configure express-session middleware
 app.use(
   session({
-    secret: "your-secret-key", // Replace with a secure secret key
+    secret: "-secret-key", // Replace with a secure secret key
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }, // Set to true if using HTTPS
@@ -75,7 +78,7 @@ app.get("/auth", async (req: Request, res: Response) => {
   req.session.codeVerifier = verifier;
 
   const authorizationRequestUrl = new URL(
-    process.env.HEADLESS_AUTHORIZATION_ENDPOINT as string
+    `https://shopify.com/authentication/<shop-id>/oauth/authorize`
   );
 
   authorizationRequestUrl.searchParams.append(
@@ -110,11 +113,28 @@ app.get("/callback", async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  // Optionally, exchange the authorization code for an access token here
+  try {
+    // Exchange the authorization code for an access token
+    const tokenResponse = await axios.post(HEADLESS_TOKEN_ENDPOINT, {
+      code: authorizationCode,
+      client_id: HEADLESS_CLIENT_ID,
+      // client_secret: CLIENT_SECRET,
+      redirect_uri: REDIRECT_URI,
+      grant_type: "authorization_code",
+      code_verifier: req.session.codeVerifier,
+    });
 
-  // Redirect or send the authorization code (or token) to the localhost client
-  const localhostRedirectUri = `http://localhost:5173/callback?code=${authorizationCode}`;
-  res.redirect(localhostRedirectUri);
+    const accessToken = tokenResponse.data.access_token;
+
+    // Redirect to the client with the access token
+    const localhostRedirectUri = `http://localhost:5173?token=${accessToken}`;
+    res.redirect(localhostRedirectUri);
+  } catch (error) {
+    console.error("Error exchanging authorization code:", error);
+    res
+      .status(500)
+      .send("Failed to exchange authorization code for access token");
+  }
 });
 
 app.listen(port, () => {
