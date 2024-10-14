@@ -78,7 +78,7 @@ app.get("/auth", async (req: Request, res: Response) => {
   req.session.codeVerifier = verifier;
 
   const authorizationRequestUrl = new URL(
-    `https://shopify.com/authentication/<shop-id>/oauth/authorize`
+    HEADLESS_AUTHORIZATION_ENDPOINT as string
   );
 
   authorizationRequestUrl.searchParams.append(
