@@ -27,6 +27,9 @@ const allowedOrigins = [
 //   },
 //   credentials: true,
 // };
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "*");
+// });
 app.options("*", cors());
 
 // Load environment variables
@@ -60,9 +63,7 @@ app.use(
     cookie: { secure: false }, // Set to true if using HTTPS
   })
 );
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
