@@ -132,7 +132,14 @@ app.post("/auth", async (req: Request, res: Response) => {
   authorizationRequestUrl.searchParams.append("code_challenge_method", "S256");
 
   console.log("Authorization URL:", authorizationRequestUrl.toString());
-  res.redirect(authorizationRequestUrl.toString());
+  try {
+    const response = await axios.get(authorizationRequestUrl.toString(), {
+      headers: { "Content-Type": "application/json" },
+    });
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 });
 app.get("/auth/shopify", async (req, res) => {
   try {
