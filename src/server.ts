@@ -30,19 +30,15 @@ const corsOptions: CorsOptions = {
 // Custom CORS middleware
 
 app.use(cors(corsOptions));
+// Middleware to set CORS headers dynamically
 app.use((req: Request, res: Response, next: NextFunction) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, PUT, DELETE, OPTIONS"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, Content-Type, X-Auth-Token"
-  );
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin!)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
+  res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
-
 // Load environment variables
 const {
   HEADLESS_CLIENT_ID,
