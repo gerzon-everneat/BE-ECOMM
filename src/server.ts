@@ -96,7 +96,7 @@ declare module "express-session" {
 }
 
 // Endpoint to initiate the authorization process
-app.post("/auth", async (req: Request, res: Response) => {
+app.get("/auth", async (req: Request, res: Response) => {
   console.log("Request received in auth endpoint");
   const clientId = HEADLESS_CLIENT_ID;
   const redirectUri = REDIRECT_URI;
