@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import session from "express-session";
 import crypto from "crypto";
 import axios from "axios";
@@ -27,10 +27,21 @@ const allowedOrigins = [
 //   },
 //   credentials: true,
 // };
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "*");
-// });
-app.options("*", cors());
+// Custom CORS middleware
+
+app.use("*", cors());
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PATCH, PUT, DELETE, OPTIONS"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, Content-Type, X-Auth-Token"
+  );
+  next();
+});
 
 // Load environment variables
 const {
