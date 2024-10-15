@@ -6,13 +6,21 @@ import crypto from "crypto";
 import axios from "axios";
 import authRoutes from "./auth/email/authRoutes";
 import cors from "cors";
-
+// VITE_APP_SHOPIFY_STORE_URL=https://cleaning-studio-shop.myshopify.com/api/2024-01/graphql.json
 const app = express();
 const port = 4000;
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 const corsOptions = {
-  origin: "*",
-  // credentials: true,
+  origin: [
+    "http://localhost:5173",
+    "https://cleaning-studio-shop.myshopify.com",
+  ], // Add your Shopify domain here
+  credentials: true, // Allow credentials
 };
 // Load environment variables
 const {
