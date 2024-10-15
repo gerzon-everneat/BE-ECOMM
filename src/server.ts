@@ -14,19 +14,20 @@ const allowedOrigins = [
   "https://cleaning-studio-shop.myshopify.com",
 ];
 
-const corsOptions: CorsOptions = {
-  origin: (
-    origin: string | undefined,
-    callback: (err: Error | null, allow?: boolean) => void
-  ) => {
-    if (allowedOrigins.includes(origin!) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-};
+// const corsOptions: CorsOptions = {
+//   origin: (
+//     origin: string | undefined,
+//     callback: (err: Error | null, allow?: boolean) => void
+//   ) => {
+//     if (allowedOrigins.includes(origin!) || !origin) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   credentials: true,
+// };
+app.options("*", cors());
 
 // Load environment variables
 const {
@@ -84,6 +85,7 @@ declare module "express-session" {
 
 // Endpoint to initiate the authorization process
 app.post("/auth", async (req: Request, res: Response) => {
+  console.log("Request received in auth endpoint");
   const clientId = HEADLESS_CLIENT_ID;
   const redirectUri = REDIRECT_URI;
   const state = "some-random-state"; // You should generate a random state for security
@@ -192,7 +194,6 @@ app.get("/callback", async (req, res) => {
   }
 });
 
-app.use(cors(corsOptions));
 app.use("/authenticate", authRoutes);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
