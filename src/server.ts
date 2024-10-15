@@ -9,11 +9,6 @@ import cors from "cors";
 // VITE_APP_SHOPIFY_STORE_URL=https://cleaning-studio-shop.myshopify.com/api/2024-01/graphql.json
 const app = express();
 const port = 4000;
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
 
 const corsOptions = {
   origin: [
@@ -22,6 +17,7 @@ const corsOptions = {
   ], // Add your Shopify domain here
   credentials: true, // Allow credentials
 };
+app.use(cors(corsOptions));
 // Load environment variables
 const {
   HEADLESS_CLIENT_ID,
@@ -55,7 +51,6 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors(corsOptions));
 
 // Function to generate a code verifier
 function generateCodeVerifier(): string {
