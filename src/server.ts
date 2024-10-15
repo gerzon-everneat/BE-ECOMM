@@ -107,6 +107,28 @@ app.post("/auth", async (req: Request, res: Response) => {
   console.log("Authorization URL:", authorizationRequestUrl.toString());
   res.redirect(authorizationRequestUrl.toString());
 });
+app.get("/auth/shopify", async (req, res) => {
+  try {
+    const response = await axios.get(
+      "https://shopify.com/authentication/21211633/oauth/authorize",
+      {
+        params: {
+          scope: "openid email customer-account-api:full",
+          client_id: HEADLESS_CLIENT_ID,
+          response_type: "code",
+          redirect_uri: REDIRECT_URI,
+          state: "some-random-state",
+          nonce: "some-random-nonce",
+          code_challenge: "2EuqBVT5s6FbpmvPmxZjX0CKLyKn0HSvRJO6KC_7_OI",
+          code_challenge_method: "S256",
+        },
+      }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Health check
 app.get("/health", (req: Request, res: Response) => {
@@ -142,8 +164,9 @@ app.get("/callback", async (req, res) => {
 
     const accessToken = tokenResponse.data.access_token;
     // Redirect to the client with the access token
-    // const localhostRedirectUri = `http://localhost:5173?token=${accessToken}`;
-    res.status(200).json({ accessToken });
+    const localhostRedirectUri = `http://localhost:5173?token=${accessToken}`;
+    res.redirect(localhostRedirectUri);
+    // res.status(200).json({ accessToken });
   } catch (error) {
     console.log(
       "Failed to exchange authorization code for access token",
