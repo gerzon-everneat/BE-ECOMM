@@ -17,7 +17,7 @@ const corsOptions = {
   ], // Add your Shopify domain here
   credentials: true, // Allow credentials
 };
-app.use(cors(corsOptions));
+
 // Load environment variables
 const {
   HEADLESS_CLIENT_ID,
@@ -179,6 +179,7 @@ app.get("/callback", async (req, res) => {
   }
 });
 
+app.use(cors(corsOptions));
 app.use("/authenticate", authRoutes);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
