@@ -9,36 +9,36 @@ import cors, { CorsOptions } from "cors";
 // VITE_APP_SHOPIFY_STORE_URL=https://cleaning-studio-shop.myshopify.com/api/2024-01/graphql.json
 const app = express();
 const port = 4000;
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://cleaning-studio-shop.myshopify.com",
-];
+// const allowedOrigins = [
+//   "http://localhost:5173",
+//   "https://cleaning-studio-shop.myshopify.com",
+// ];
 
-const corsOptions: CorsOptions = {
-  origin: (
-    origin: string | undefined,
-    callback: (err: Error | null, allow?: boolean) => void
-  ) => {
-    if (allowedOrigins.includes(origin!) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-};
-// Custom CORS middleware
+// const corsOptions: CorsOptions = {
+//   origin: (
+//     origin: string | undefined,
+//     callback: (err: Error | null, allow?: boolean) => void
+//   ) => {
+//     if (allowedOrigins.includes(origin!) || !origin) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   credentials: true,
+// };
+// // Custom CORS middleware
 
-app.use(cors(corsOptions));
-// Middleware to set CORS headers dynamically
-app.use((req: Request, res: Response, next: NextFunction) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin!)) {
-    res.header("Access-Control-Allow-Origin", origin);
-  }
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
+// app.use(cors(corsOptions));
+// // Middleware to set CORS headers dynamically
+// app.use((req: Request, res: Response, next: NextFunction) => {
+//   const origin = req.headers.origin;
+//   if (allowedOrigins.includes(origin!)) {
+//     res.header("Access-Control-Allow-Origin", origin);
+//   }
+//   res.header("Access-Control-Allow-Credentials", "true");
+//   next();
+// });
 // Load environment variables
 const {
   HEADLESS_CLIENT_ID,
