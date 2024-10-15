@@ -11,8 +11,8 @@ const app = express();
 const port = 4000;
 
 const corsOptions = {
-  origin: ["http://localhost:5173"],
-  credentials: true,
+  origin: "*",
+  // credentials: true,
 };
 // Load environment variables
 const {
