@@ -1,14 +1,19 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express, { Request, Response } from "express";
 import session from "express-session";
-import dotenv from "dotenv";
 import crypto from "crypto";
 import axios from "axios";
-
-dotenv.config();
+import authRoutes from "./auth/email/authRoutes";
+import cors from "cors";
 
 const app = express();
 const port = 4000;
 
+const corsOptions = {
+  origin: ["http://localhost:5173"],
+  credentials: true,
+};
 // Load environment variables
 const {
   HEADLESS_CLIENT_ID,
@@ -40,6 +45,9 @@ app.use(
     cookie: { secure: false }, // Set to true if using HTTPS
   })
 );
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors(corsOptions));
 
 // Function to generate a code verifier
 function generateCodeVerifier(): string {
@@ -130,13 +138,9 @@ app.get("/callback", async (req, res) => {
     );
 
     const accessToken = tokenResponse.data.access_token;
-
-    // Log the access token for debugging
-    console.log("Access Token:", accessToken);
-
     // Redirect to the client with the access token
-    const localhostRedirectUri = `http://localhost:5173?token=${accessToken}`;
-    res.redirect(localhostRedirectUri);
+    // const localhostRedirectUri = `http://localhost:5173?token=${accessToken}`;
+    res.status(200).json({ accessToken });
   } catch (error) {
     console.log(
       "Failed to exchange authorization code for access token",
@@ -149,6 +153,9 @@ app.get("/callback", async (req, res) => {
   }
 });
 
+app.use("/authenticate", authRoutes);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+export default app;
