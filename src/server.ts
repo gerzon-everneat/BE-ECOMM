@@ -59,6 +59,9 @@ app.use(
     cookie: { secure: false }, // Set to true if using HTTPS
   })
 );
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -136,7 +139,7 @@ app.get("/auth/shopify", async (req, res) => {
     );
     res.json(response.data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error });
   }
 });
 
