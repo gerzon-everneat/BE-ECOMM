@@ -5,17 +5,27 @@ import session from "express-session";
 import crypto from "crypto";
 import axios from "axios";
 import authRoutes from "./auth/email/authRoutes";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 // VITE_APP_SHOPIFY_STORE_URL=https://cleaning-studio-shop.myshopify.com/api/2024-01/graphql.json
 const app = express();
 const port = 4000;
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://cleaning-studio-shop.myshopify.com",
+];
 
-const corsOptions = {
-  origin: [
-    "http://localhost:5173",
-    "https://cleaning-studio-shop.myshopify.com",
-  ], // Add your Shopify domain here
-  credentials: true, // Allow credentials
+const corsOptions: CorsOptions = {
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) => {
+    if (allowedOrigins.includes(origin!) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
 };
 
 // Load environment variables
